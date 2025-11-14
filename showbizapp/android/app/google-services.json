@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "622702553258",
+    "project_id": "showbizapp-f8f9d",
+    "storage_bucket": "showbizapp-f8f9d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622702553258:android:97e9ac7e405aac380cc8d3",
+        "android_client_info": {
+          "package_name": "com.example.showbizapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYtrEBRLXIeTvRns604B2DT578dFmuzzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

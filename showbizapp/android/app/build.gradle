@@ -3,20 +3,25 @@ plugins {
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'
 }
 
 android {
     namespace = "com.example.showbizapp"
+
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
+
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = '17' // For Kotlin, ensure this matches or is compatible
     }
 
     defaultConfig {
@@ -24,10 +29,18 @@ android {
         applicationId = "com.example.showbizapp"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // Import the Firebase BoM
+        //implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
+
+
+
+        // Add the dependencies for any other desired Firebase products
+        // https://firebase.google.com/docs/android/setup#available-libraries
+        minSdkVersion 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
     }
 
     buildTypes {
@@ -42,3 +55,9 @@ android {
 flutter {
     source = "../.."
 }
+dependencies {
+    // other dependencies...
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+
+}
+

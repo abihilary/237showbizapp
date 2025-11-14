@@ -1,8 +1,5 @@
+// components/buttomnav.dart
 import 'package:flutter/material.dart';
-import 'package:showbizapp/pages/CommingSoon.dart';
-import '../pages/Home.dart';
-import '../pages/News.dart';
-import '../pages/Event.dart';
 
 class BottomNav extends StatelessWidget {
   final Function externalSearchFunction;
@@ -21,7 +18,7 @@ class BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      color: isDarkMode ? const Color(0xFF0A1F44) : Colors.orange[600],
+      color: isDarkMode ?  Color(0xFF0A1F44):Colors.orange[600],
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -40,7 +37,13 @@ class BottomNav extends StatelessWidget {
     final color = isSelected ? Colors.white : Colors.white.withOpacity(0.6);
 
     return InkWell(
-      onTap: () => onItemTapped(index),
+      onTap: () {
+        if (index == 4) {
+          externalSearchFunction();
+        } else {
+          onItemTapped(index);
+        }
+      },
       child: SizedBox(
         height: 60,
         child: Column(
@@ -62,4 +65,3 @@ class BottomNav extends StatelessWidget {
     );
   }
 }
-

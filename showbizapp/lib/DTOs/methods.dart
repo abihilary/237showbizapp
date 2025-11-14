@@ -13,15 +13,11 @@ import 'UserModel.dart';
 
 Future<void> saveLocalSubscriber(String name, String email, String subscriberId) async {
   final prefs = await SharedPreferences.getInstance();
-  final subscriberJson = prefs.getString('subscriber');
-  if (subscriberJson == null) return; // no existing subscriber
-
-  final Map<String, dynamic> subscriber = jsonDecode(subscriberJson);
-  if (name != null) subscriber['name'] = name;
-  if (email != null) subscriber['email'] = email;
-
-  await prefs.setString('subscriber', jsonEncode(subscriber));
+  await prefs.setString('subscriberName', name);
+  await prefs.setString('subscriberId', subscriberId);
+  // The 'subscriber' key seems to be for a different purpose, so we'll just use name and id
 }
+
 //verification section
 Future<void> sendVerificationEmail(String name, String email,
     String code) async {
@@ -45,12 +41,13 @@ Future<void> sendVerificationEmail(String name, String email,
     throw Exception('Failed to send email: $e');
   }
 }
+
 void showUpdateModal(BuildContext context, {
   required String subscriberId,
   required bool isDarkMode,
   required String username,
 }) {
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController(text: username); // Prefill with existing username
   final TextEditingController emailController = TextEditingController();
   final TextEditingController codeController = TextEditingController();
 
@@ -62,7 +59,7 @@ void showUpdateModal(BuildContext context, {
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (BuildContext context) {
-      final userModel = Provider.of<UserModel>(context);
+      final userModel = Provider.of<UserModel>(context, listen: false);
 
       return StatefulBuilder(
         builder: (context, setState) {
@@ -132,11 +129,11 @@ void showUpdateModal(BuildContext context, {
                 else
                   ElevatedButton(
                     onPressed: () async {
-                      final username = usernameController.text.trim();
-                      final email = emailController.text.trim();
+                      final updatedUsername = usernameController.text.trim();
+                      final updatedEmail = emailController.text.trim();
 
                       if (!showCodeField) {
-                        if (username.isEmpty || email.isEmpty) {
+                        if (updatedUsername.isEmpty || updatedEmail.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Please fill in all fields')),
                           );
@@ -149,17 +146,12 @@ void showUpdateModal(BuildContext context, {
                           generatedCode = newCode;
                         });
 
-                        print('Generated Code: $generatedCode');
-                        print('Sending email to: $email');
-
                         try {
-                          await sendVerificationEmail(username, email, generatedCode);
-                          print('Email sent successfully');
+                          await sendVerificationEmail(updatedUsername, updatedEmail, generatedCode);
                           setState(() {
                             showCodeField = true;
                           });
                         } catch (e) {
-                          print('Error sending verification email: $e');
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Failed to send email: $e')),
                           );
@@ -168,32 +160,25 @@ void showUpdateModal(BuildContext context, {
                         }
                       } else {
                         final inputCode = codeController.text.trim();
-                        print('User entered code: $inputCode');
-                        print('Expected code: $generatedCode');
-
                         if (inputCode == generatedCode) {
                           setState(() => isLoading = true);
                           final uri = Uri.parse('https://api.237showbiz.com/api/subscribers');
 
                           try {
-                            print('Sending update request...');
                             final response = await http.post(
                               uri,
                               headers: {'Content-Type': 'application/json'},
                               body: json.encode({
                                 'action': 'update',
-                                'id': subscriberId,
-                                'name': username,
-                                'email': email,
+                                'id': userModel.subscriberId, // Use the ID from the provider
+                                'name': updatedUsername,
+                                'email': updatedEmail,
                               }),
                             );
 
-                            print('Update response status: ${response.statusCode}');
-                            print('Response body: ${response.body}');
-
                             if (response.statusCode == 200 || response.statusCode == 201) {
-                              userModel.setUsername(username);
-                              await saveLocalSubscriber(username, email, subscriberId);
+                              userModel.setSubscriber(updatedUsername, userModel.subscriberId); // Update provider state
+                              await saveLocalSubscriber(updatedUsername, updatedEmail, userModel.subscriberId); // Save to local storage
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Update successful')),
@@ -206,7 +191,6 @@ void showUpdateModal(BuildContext context, {
                               );
                             }
                           } catch (e) {
-                            print('Network error during update: $e');
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Network error: $e')),
                             );
@@ -214,7 +198,6 @@ void showUpdateModal(BuildContext context, {
                             setState(() => isLoading = false);
                           }
                         } else {
-                          print('Incorrect verification code entered');
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Incorrect verification code.')),
                           );
@@ -243,5 +226,3 @@ void showUpdateModal(BuildContext context, {
     },
   );
 }
-
-

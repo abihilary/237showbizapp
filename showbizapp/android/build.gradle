@@ -1,19 +1,42 @@
+// THIS IS THE BLOCK THAT WAS MISSING FROM YOUR FILE
+buildscript {
+    // Defines versions for tools used in the build process
+    ext.kotlin_version = '1.7.10' // You can adjust this if needed
+
+    // Defines where Gradle should look for plugins
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    // Defines the actual plugins and their versions
+    dependencies {
+        // Use a standard version for the Android Gradle Plugin
+        classpath 'com.android.tools.build:gradle:7.3.0'
+
+        // The Kotlin plugin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // THIS IS THE CRITICAL LINE. We are defining the Google Services plugin version ONCE for the whole project.
+        // Let's use a recent, stable version to avoid conflicts.
+        classpath 'com.google.gms:google-services:4.4.1'
+    }
+}
+
+// This is the part you already had, which is also needed
 allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://storage.googleapis.com/download.flutter.io' } // Add this line
     }
 }
 
-rootProject.buildDir = "../build"
-
+rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
-
 subprojects {
-    project.evaluationDependsOn(":app")
+    project.evaluationDependsOn(':app')
 }
 
 tasks.register("clean", Delete) {

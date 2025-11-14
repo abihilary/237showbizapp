@@ -17,12 +17,12 @@ class PostModelAdapter extends TypeAdapter<PostModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PostModel(
-      id: fields[0] as String,
-      title: fields[1] as String,
-      imageUrl: fields[2] as String,
-      date: fields[3] as String,
-      content: fields[4] as String,
-      youtubeLink: fields[5] as String,
+      id: fields[0] as int?,
+      title: fields[1] as String?,
+      imageUrl: fields[2] as String?,
+      date: fields[3] as String?,
+      content: fields[4] as String?,
+      youtubeLink: fields[5] as String?,
     );
   }
 

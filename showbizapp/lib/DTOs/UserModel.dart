@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
-
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserModel extends ChangeNotifier {
   String _username = '';
@@ -8,14 +9,23 @@ class UserModel extends ChangeNotifier {
   String get username => _username;
   String get subscriberId => _subscriberId;
 
-  void setUsername(String newUsername) {
-    _username = newUsername;
+  get showAdmin => true;
+
+  void setSubscriber(String name, String id) {
+    _username = name;
+    _subscriberId = id;
     notifyListeners();
   }
 
-  void setSubscriberId(String newSubscriberId) {
-    _subscriberId = newSubscriberId;
-    notifyListeners();
+  // A new method to load the subscriber data from SharedPreferences
+  Future<void> loadSubscriberData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('subscriberName');
+    final id = prefs.getString('subscriberId');
+
+    if (name != null && id != null) {
+      setSubscriber(name, id);
+    }
   }
 }
 

@@ -1,6 +1,7 @@
 // pages/Home.dart
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -69,111 +70,9 @@ class _HomeState extends State<Home> {
       ),
     );
     _fetchPostData();
-    _setupFirebaseMessaging();
+    //_setupFirebaseMessaging();
+    //_requestNotificationPermissionAfterBuild();
    //start from here
-  }
-
-  Future<void> _sendTokenToServer(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    final subscriberId = prefs.getString('subscriberId');
-
-    // Only send the token if the user is identified
-    if (subscriberId == null || subscriberId.isEmpty) {
-      print("User not identified. Not sending FCM token to server.");
-      return;
-    }
-
-    // IMPORTANT: Replace this URL with your actual server endpoint
-    final url = Uri.parse('https://237showbiz.com/api/subscriber_route.php');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: { 'Content-Type': 'application/json' },
-        body: jsonEncode({
-          'action': 'register_device_token', // The new action for your router
-          'subscriberId': subscriberId,
-          'fcmToken': token,
-          'deviceType': 'android', // Good practice to store device type
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        print('FCM token successfully sent to server.');
-      } else {
-        print('Failed to send FCM token. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
-      }
-    } catch (e) {
-      print('Error sending FCM token to server: $e');
-    }
-  }
-  void _setupFirebaseMessaging() {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    // 1. Get the initial token and send it to your server
-    messaging.getToken().then((token) {
-      if (token != null) {
-        print("FCM Token: $token"); // Good for debugging
-        _sendTokenToServer(token);
-      }
-    });
-
-    // 2. Set up a listener for when a new token is generated
-    messaging.onTokenRefresh.listen(_sendTokenToServer);
-
-    // 3. Handle foreground messages (when the app is open)
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        _showNotificationBanner(message); // Your existing flushbar function
-      }
-    });
-  }
-
-
-  void _showNotificationBanner(RemoteMessage message) {
-    Flushbar(
-      // Title of the notification
-      titleText: Text(
-        message.notification?.title ?? "New Notification",
-        style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18.0,
-            color: Colors.white,
-            fontFamily: 'Poppins'
-        ),
-      ),
-      // Body of the notification
-      messageText: Text(
-        message.notification?.body ?? "",
-        style: TextStyle(
-            fontSize: 16.0,
-            color: Colors.white,
-            fontFamily: 'Poppins'
-        ),
-      ),
-      // How long it stays on screen
-      duration: const Duration(seconds: 5),
-      // The icon on the left
-      icon: Icon(
-        Icons.notifications_active,
-        color: Colors.white,
-        size: 28.0,
-      ),
-      // The gradient background
-      backgroundGradient: LinearGradient(
-        colors: [Colors.orange.shade800, Colors.orange.shade500],
-      ),
-      // How the bar enters and leaves
-      animationDuration: const Duration(milliseconds: 400),
-      // Rounded corners
-      borderRadius: BorderRadius.circular(8),
-      // Margin around the banner
-      margin: const EdgeInsets.all(8),
-      // Dismiss it by swiping
-      isDismissible: true,
-      flushbarPosition: FlushbarPosition.TOP,
-    ).show(context);
   }
 
   // NEW METHOD: Load user data from SharedPreferences

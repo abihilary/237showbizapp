@@ -47,7 +47,7 @@ dependencies:
   mailer: ^6.0.0  
   flutter_launcher_icons: ^0.14.3
   html_unescape: ^2.0.0
-  webview_flutter: ^4.10.0
+  webview_flutter: ^4.13.0
   shared_preferences: ^2.5.3
   web_socket_channel: ^3.0.3
   timeago: ^3.7.1
@@ -66,6 +66,8 @@ dependencies:
   firebase_core: ^2.4.1
   firebase_messaging: ^14.2.1
   another_flushbar: ^1.12.30
+  flutter_local_notifications: ^17.1.2 # Use the latest version
+
 
 
 

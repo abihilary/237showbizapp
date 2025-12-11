@@ -1,7 +1,7 @@
 // THIS IS THE BLOCK THAT WAS MISSING FROM YOUR FILE
 buildscript {
     // Defines versions for tools used in the build process
-    ext.kotlin_version = '1.7.10' // You can adjust this if needed
+    ext.kotlin_version = '1.8.22' // You can adjust this if needed
 
     // Defines where Gradle should look for plugins
     repositories {

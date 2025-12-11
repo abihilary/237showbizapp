@@ -15,7 +15,8 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../DTOs/UserModel.dart';
-import '../DTOs/CommentApi.dart'; // Keep this import if you have other functions in this file
+import '../DTOs/CommentApi.dart';
+import '../services/VideoDetailPlayer.dart'; // Keep this import if you have other functions in this file
 
 // ====================================================================
 // NEW WIDGET FOR STABLE MODAL CONTENT & LIFECYCLE MANAGEMENT
@@ -1066,17 +1067,8 @@ class _CustomCardState extends State<CustomCard> {
                             padding: const EdgeInsets.only(top: 16.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: YoutubePlayer(
-                                controller: YoutubePlayerController.fromVideoId(
-                                  videoId: videoId,
-                                  params: const YoutubePlayerParams(
-                                      showControls: true,
-                                      showFullscreenButton: true,
-                                      mute: false,
-                                      loop: false),
-                                ),
-                                aspectRatio: 16 / 9,
-                              ),
+                              // **FIX:** Use the new stateful widget to manage the controller lifecycle
+                              child: VideoDetailPlayer(videoId: videoId),
                             ),
                           ),
                         if (videoId == null || videoId.isEmpty)
